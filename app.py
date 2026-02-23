@@ -10,7 +10,7 @@ import os
 
 app = Flask(__name__)
 
-API_KEY = "0bZ0W6cxl0unmT5XjUrxL7X50HprqK8U0es3AGJr"
+API_KEY = os.environ.get("API_KEY")
 
 ANIMALS = [
     "elephant", "lion", "giraffe", "penguin", "dolphin",

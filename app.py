@@ -7,6 +7,7 @@ import requests
 import json
 import os
 
+
 app = Flask(__name__)
 
 API_KEY = "0bZ0W6cxl0unmT5XjUrxL7X50HprqK8U0es3AGJr"
@@ -110,4 +111,5 @@ def remove_favourite(name):
     return jsonify({"message": "Removed!"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)

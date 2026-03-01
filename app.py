@@ -1,7 +1,3 @@
-##API_KEY = "0bZ0W6cxl0unmT5XjUrxL7X50HprqK8U0es3AGJr"
-
-
-
 from flask import Flask, jsonify, render_template, request
 import requests
 import json
@@ -53,13 +49,11 @@ def home():
 
 @app.route("/animal/<name>")
 def get_animal(name):
-    # Check cache first
     cache = load_json(CACHE_FILE)
     if name in cache:
         print(f"Loaded {name} from cache")
         return jsonify(cache[name])
 
-    # Not in cache, fetch from API
     print(f"Fetching {name} from API")
     response = requests.get(
         "https://api.api-ninjas.com/v1/animals",
@@ -76,14 +70,52 @@ def get_animal(name):
             "diet": animal["characteristics"].get("diet", "Unknown"),
             "slogan": animal["characteristics"].get("slogan", ""),
             "lifespan": animal["characteristics"].get("lifespan", "Unknown"),
-            "name_of_young": animal("characteristics").get("name_of_young","Unknown"),
+            "name_of_young": animal["characteristics"].get("name_of_young", "Unknown"),  # Fixed bug: was animal("characteristics")
         }
-        # Save to cache
         cache[name] = result
         save_json(CACHE_FILE, cache)
         return jsonify(result)
 
     return jsonify({"error": "Animal not found"})
+
+@app.route("/animal/<name>/image")
+def get_animal_image(name):
+    """Fetch animal image from Wikipedia API"""
+    cache = load_json("image_cache.json")
+    if name in cache:
+        return jsonify({"image_url": cache[name]})
+
+    try:
+        # Search Wikipedia for the animal
+        search_response = requests.get(
+            "https://en.wikipedia.org/w/api.php",
+            params={
+                "action": "query",
+                "titles": name,
+                "prop": "pageimages",
+                "format": "json",
+                "pithumbsize": 600,
+                "redirects": 1,
+            }
+        )
+        data = search_response.json()
+        pages = data.get("query", {}).get("pages", {})
+        image_url = None
+        for page in pages.values():
+            thumb = page.get("thumbnail", {})
+            if thumb.get("source"):
+                image_url = thumb["source"]
+                break
+
+        if image_url:
+            cache[name] = image_url
+            save_json("image_cache.json", cache)
+            return jsonify({"image_url": image_url})
+
+    except Exception as e:
+        print(f"Image fetch error: {e}")
+
+    return jsonify({"image_url": None})
 
 @app.route("/animals")
 def animal_list():

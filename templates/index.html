@@ -4,513 +4,523 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animal Explorer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
     <style>
         :root {
-            --cream: #fdf6e3;
-            --warm-brown: #8b5e3c;
-            --forest: #3a6b4a;
-            --forest-light: #4e8f63;
-            --amber: #e8a020;
-            --rust: #c0522a;
-            --text: #3d2b1f;
-            --card-bg: #fffdf7;
-            --shadow: rgba(61, 43, 31, 0.12);
+            --ink: #1a1008;
+            --parchment: #f5efe4;
+            --sage: #5a7a5e;
+            --sage-light: #7a9e7e;
+            --ochre: #c8852a;
+            --ochre-light: #e8a84a;
+            --rust: #a84c2a;
+            --mist: #e8f0e9;
+            --card: #fdfaf5;
+            --border: rgba(90,122,94,0.2);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Nunito', sans-serif;
-            background-color: var(--cream);
-            background-image: 
-                radial-gradient(ellipse at 20% 20%, rgba(74, 130, 90, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(232, 160, 32, 0.08) 0%, transparent 50%);
+            font-family: 'DM Sans', sans-serif;
+            background: var(--parchment);
+            background-image:
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235a7a5e' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             min-height: 100vh;
-            color: var(--text);
-            padding: 30px 20px 60px;
+            color: var(--ink);
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 36px;
-        }
+        #root { min-height: 100vh; }
 
-        header h1 {
-            font-family: 'Lora', serif;
-            font-size: 2.6rem;
-            color: var(--forest);
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-        }
-
-        header p {
-            font-size: 1rem;
-            color: var(--warm-brown);
-            margin-top: 6px;
-            font-style: italic;
-            font-family: 'Lora', serif;
-        }
-
-        .container {
-            max-width: 620px;
-            margin: 0 auto;
-        }
-
-        /* Search */
-        .search-bar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .search-bar input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 2px solid #d9c9b0;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-family: 'Nunito', sans-serif;
-            background: var(--card-bg);
-            color: var(--text);
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .search-bar input:focus {
-            border-color: var(--forest-light);
-        }
-
-        .search-bar input::placeholder {
-            color: #b5a089;
-        }
-
-        /* Buttons */
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        button {
-            font-family: 'Nunito', sans-serif;
-            font-weight: 800;
-            font-size: 0.95rem;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 22px;
-            cursor: pointer;
-            transition: transform 0.15s, box-shadow 0.15s;
-            letter-spacing: 0.2px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary {
-            background: var(--forest);
-            color: white;
-            box-shadow: 0 4px 12px rgba(58, 107, 74, 0.3);
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 6px 16px rgba(58, 107, 74, 0.4);
-        }
-
-        .btn-random {
-            background: var(--amber);
-            color: white;
-            box-shadow: 0 4px 12px rgba(232, 160, 32, 0.3);
-        }
-
-        .btn-random:hover {
-            box-shadow: 0 6px 16px rgba(232, 160, 32, 0.4);
-        }
-
-        .btn-fav {
-            background: var(--rust);
-            color: white;
-            box-shadow: 0 4px 12px rgba(192, 82, 42, 0.3);
-        }
-
-        .btn-fav:hover {
-            box-shadow: 0 6px 16px rgba(192, 82, 42, 0.4);
-        }
-
-        .btn-search {
-            background: var(--warm-brown);
-            color: white;
-            box-shadow: 0 4px 12px rgba(139, 94, 60, 0.3);
-        }
-
-        .btn-remove {
-            background: #e8d5c4;
-            color: var(--rust);
-            font-size: 0.85rem;
-            padding: 8px 14px;
-        }
-
-        .btn-view {
-            background: #d6e8da;
-            color: var(--forest);
-            font-size: 0.85rem;
-            padding: 8px 14px;
-        }
-
-        /* Animal Card */
-        #animal-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 8px 32px var(--shadow), 0 1px 0 rgba(255,255,255,0.8) inset;
-            margin-bottom: 24px;
-            border: 1px solid rgba(217, 201, 176, 0.5);
-            min-height: 200px;
-            transition: all 0.3s ease;
-        }
-
-        #animal-card.empty {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--warm-brown);
-        }
-
-        .empty-state .emoji {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .empty-state p {
-            font-family: 'Lora', serif;
-            font-style: italic;
-            font-size: 1.1rem;
-        }
-
-        .animal-name {
-            font-family: 'Lora', serif;
-            font-size: 2rem;
-            color: var(--forest);
-            margin-bottom: 20px;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .facts-grid {
-            display: grid;
-            gap: 14px;
-        }
-
-        .fact {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 16px;
-            background: var(--cream);
-            border-radius: 12px;
-            border: 1px solid rgba(217, 201, 176, 0.4);
-        }
-
-        .fact-icon {
-            font-size: 1.3rem;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .fact-content {
-            flex: 1;
-        }
-
-        .fact-label {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--warm-brown);
-            margin-bottom: 2px;
-        }
-
-        .fact-value {
-            font-size: 1rem;
-            color: var(--text);
-            font-weight: 600;
-            line-height: 1.4;
-        }
-
-        .slogan-fact {
-            background: linear-gradient(135deg, rgba(58, 107, 74, 0.08), rgba(232, 160, 32, 0.08));
-            border-color: rgba(58, 107, 74, 0.2);
-        }
-
-        .slogan-fact .fact-value {
-            font-family: 'Lora', serif;
-            font-style: italic;
-            font-size: 1.05rem;
-            color: var(--forest);
-        }
-
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 28px 0;
-            color: #c4ab92;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .divider::before, .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: #e0cdb8;
-        }
-
-        /* Favourites */
-        #favourites-section {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 8px 32px var(--shadow);
-            border: 1px solid rgba(217, 201, 176, 0.5);
-        }
-
-        #favourites-section h2 {
-            font-family: 'Lora', serif;
-            font-size: 1.4rem;
-            color: var(--forest);
-            margin-bottom: 18px;
-        }
-
-        .fav-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #ede3d6;
-        }
-
-        .fav-item:last-child {
-            border-bottom: none;
-        }
-
-        .fav-name {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--text);
-        }
-
-        .fav-actions {
-            display: flex;
-            gap: 6px;
-        }
-
-        .no-favs {
-            font-family: 'Lora', serif;
-            font-style: italic;
-            color: var(--warm-brown);
-            font-size: 0.95rem;
-        }
-
-        /* Fade animation */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .fade-in {
-            animation: fadeIn 0.35s ease forwards;
+        @keyframes imageReveal {
+            from { opacity: 0; transform: scale(1.04); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🌿 Animal Explorer</h1>
-            <p>Discover a new animal every evening</p>
-        </header>
+<div id="root"></div>
 
-        <div class="search-bar">
-            <input type="text" id="search-box" placeholder="Search for an animal..." 
-                   onkeydown="if(event.key==='Enter') searchAnimal()">
-            <button class="btn-search" onclick="searchAnimal()">Search 🔍</button>
-        </div>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
 
-        <div id="animal-card" class="empty">
-            <div class="empty-state">
-                <span class="emoji">🦁</span>
-                <p>Press a button to discover an animal!</p>
-            </div>
-        </div>
+// ── Styles as JS objects ─────────────────────────────────
+const S = {
+    app: {
+        maxWidth: 680,
+        margin: '0 auto',
+        padding: '40px 20px 80px',
+    },
+    header: {
+        textAlign: 'center',
+        marginBottom: 40,
+    },
+    h1: {
+        fontFamily: "'Playfair Display', serif",
+        fontSize: '2.8rem',
+        color: '#1a1008',
+        letterSpacing: '-1px',
+        lineHeight: 1.1,
+    },
+    subtitle: {
+        fontFamily: "'Playfair Display', serif",
+        fontStyle: 'italic',
+        color: '#5a7a5e',
+        marginTop: 6,
+        fontSize: '1.05rem',
+    },
+    searchRow: {
+        display: 'flex',
+        gap: 8,
+        marginBottom: 16,
+    },
+    input: {
+        flex: 1,
+        padding: '13px 20px',
+        border: '2px solid #d4c9b0',
+        borderRadius: 50,
+        fontSize: '1rem',
+        fontFamily: "'DM Sans', sans-serif",
+        background: '#fdfaf5',
+        color: '#1a1008',
+        outline: 'none',
+        transition: 'border-color 0.2s',
+    },
+    btnRow: {
+        display: 'flex',
+        gap: 8,
+        marginBottom: 28,
+        flexWrap: 'wrap',
+    },
+    btn: (bg, shadow) => ({
+        fontFamily: "'DM Sans', sans-serif",
+        fontWeight: 600,
+        fontSize: '0.95rem',
+        border: 'none',
+        borderRadius: 50,
+        padding: '12px 22px',
+        cursor: 'pointer',
+        background: bg,
+        color: 'white',
+        boxShadow: shadow,
+        transition: 'transform 0.15s, box-shadow 0.15s',
+        letterSpacing: '0.1px',
+    }),
 
-        <div class="controls">
-            <button class="btn-primary" onclick="nextAnimal()">Next Animal 🐾</button>
-            <button class="btn-random" onclick="randomAnimal()">Random 🎲</button>
-            <button class="btn-fav" onclick="saveFavourite()">Save Favourite ⭐</button>
-        </div>
+    // Card
+    card: {
+        background: '#fdfaf5',
+        borderRadius: 24,
+        overflow: 'hidden',
+        boxShadow: '0 12px 40px rgba(26,16,8,0.1), 0 1px 0 rgba(255,255,255,0.8) inset',
+        border: '1px solid rgba(90,122,94,0.15)',
+        marginBottom: 24,
+        animation: 'fadeUp 0.4s ease forwards',
+    },
+    imageContainer: {
+        width: '100%',
+        height: 280,
+        overflow: 'hidden',
+        position: 'relative',
+        background: '#e8e0d4',
+    },
+    image: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        display: 'block',
+        animation: 'imageReveal 0.5s ease forwards',
+    },
+    imagePlaceholder: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '4rem',
+        background: 'linear-gradient(135deg, #e8e0d0, #d4c9b8)',
+        animation: 'pulse 1.5s ease infinite',
+    },
+    cardBody: {
+        padding: '28px 32px 32px',
+    },
+    animalName: {
+        fontFamily: "'Playfair Display', serif",
+        fontSize: '2.2rem',
+        color: '#1a1008',
+        marginBottom: 20,
+        lineHeight: 1.2,
+    },
+    factsGrid: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 12,
+    },
+    fact: (wide, accent) => ({
+        padding: '12px 16px',
+        background: accent ? 'linear-gradient(135deg, rgba(90,122,94,0.1), rgba(200,133,42,0.08))' : '#f0ede6',
+        borderRadius: 12,
+        border: accent ? '1px solid rgba(90,122,94,0.2)' : '1px solid rgba(0,0,0,0.04)',
+        gridColumn: wide ? '1 / -1' : 'auto',
+    }),
+    factLabel: {
+        fontSize: '0.7rem',
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        letterSpacing: '0.9px',
+        color: '#8b7355',
+        marginBottom: 3,
+    },
+    factValue: (italic) => ({
+        fontSize: '0.98rem',
+        color: '#1a1008',
+        fontWeight: 500,
+        lineHeight: 1.4,
+        fontFamily: italic ? "'Playfair Display', serif" : "'DM Sans', sans-serif",
+        fontStyle: italic ? 'italic' : 'normal',
+        color: italic ? '#5a7a5e' : '#1a1008',
+    }),
 
-        <div class="divider">⭐ Favourites</div>
+    // Empty state
+    empty: {
+        background: '#fdfaf5',
+        borderRadius: 24,
+        padding: '60px 32px',
+        textAlign: 'center',
+        border: '2px dashed #d4c9b0',
+        marginBottom: 24,
+    },
+    emptyEmoji: { fontSize: '3.5rem', display: 'block', marginBottom: 12 },
+    emptyText: {
+        fontFamily: "'Playfair Display', serif",
+        fontStyle: 'italic',
+        color: '#8b7355',
+        fontSize: '1.1rem',
+    },
 
-        <div id="favourites-section">
-            <div id="favourites-list"><p class="no-favs">No favourites saved yet!</p></div>
-        </div>
-    </div>
+    // Divider
+    divider: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        margin: '28px 0',
+        color: '#b5a089',
+        fontSize: '0.8rem',
+        fontWeight: 600,
+        textTransform: 'uppercase',
+        letterSpacing: '1.5px',
+    },
+    divLine: { flex: 1, height: 1, background: '#e0d5c4' },
 
-    <script>
-        let animals = [];
-        let currentIndex = 0;
-        let currentAnimal = null;
+    // Favourites
+    favsCard: {
+        background: '#fdfaf5',
+        borderRadius: 24,
+        padding: '28px 32px',
+        boxShadow: '0 8px 32px rgba(26,16,8,0.08)',
+        border: '1px solid rgba(90,122,94,0.15)',
+    },
+    favsTitle: {
+        fontFamily: "'Playfair Display', serif",
+        fontSize: '1.4rem',
+        color: '#1a1008',
+        marginBottom: 16,
+    },
+    favItem: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '12px 0',
+        borderBottom: '1px solid #ede3d6',
+    },
+    favName: { fontWeight: 600, fontSize: '1rem' },
+    favActions: { display: 'flex', gap: 6 },
+    smallBtn: (bg, color) => ({
+        fontFamily: "'DM Sans', sans-serif",
+        fontWeight: 600,
+        fontSize: '0.82rem',
+        border: 'none',
+        borderRadius: 50,
+        padding: '7px 14px',
+        cursor: 'pointer',
+        background: bg,
+        color: color,
+        transition: 'transform 0.1s',
+    }),
+    noFavs: {
+        fontFamily: "'Playfair Display', serif",
+        fontStyle: 'italic',
+        color: '#8b7355',
+        fontSize: '0.95rem',
+    },
+    loader: {
+        width: 24,
+        height: 24,
+        border: '3px solid #d4c9b0',
+        borderTopColor: '#5a7a5e',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite',
+        margin: '0 auto',
+    },
+};
 
-        fetch("/animals")
-            .then(r => r.json())
-            .then(data => { animals = data; });
+// ── Components ────────────────────────────────────────────
 
-        function showAnimal(animal) {
-            currentAnimal = animal;
-            const card = document.getElementById("animal-card");
-            card.classList.remove("empty");
-            card.innerHTML = `
-                <div class="fade-in">
-                    <h2 class="animal-name">${animal.name}</h2>
-                    <div class="facts-grid">
-                        <div class="fact">
-                            <span class="fact-icon">🌍</span>
-                            <div class="fact-content">
-                                <div class="fact-label">Lives in</div>
-                                <div class="fact-value">${Array.isArray(animal.location) ? animal.location.join(", ") : animal.location}</div>
-                            </div>
-                        </div>
-                        <div class="fact">
-                            <span class="fact-icon">🏕️</span>
-                            <div class="fact-content">
-                                <div class="fact-label">Habitat</div>
-                                <div class="fact-value">${animal.habitat}</div>
-                            </div>
-                        </div>
-                        <div class="fact">
-                            <span class="fact-icon">🍽️</span>
-                            <div class="fact-content">
-                                <div class="fact-label">Diet</div>
-                                <div class="fact-value">${animal.diet}</div>
-                            </div>
-                        </div>
-                        <div class="fact">
-                            <span class="fact-icon">⏳</span>
-                            <div class="fact-content">
-                                <div class="fact-label">Lifespan</div>
-                                <div class="fact-value">${animal.lifespan}</div>
-                            </div>
-                        </div>
-                        ${animal.name_of_young && animal.name_of_young !== 'Unknown' ? `
-                        <div class="fact">
-                            <span class="fact-icon">🍼</span>
-                            <div class="fact-content">
-                                <div class="fact-label">Baby name</div>
-                                <div class="fact-value">${animal.name_of_young}</div>
-                            </div>
-                        </div>` : ''}
-                        ${animal.slogan ? `
-                        <div class="fact slogan-fact">
-                            <span class="fact-icon">💡</span>
-                            <div class="fact-content">
-                                <div class="fact-label">Fun fact</div>
-                                <div class="fact-value">${animal.slogan}</div>
-                            </div>
-                        </div>` : ''}
-                    </div>
-                </div>
-            `;
-        }
+function AnimalImage({ name }) {
+    const [imageUrl, setImageUrl] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-        function nextAnimal() {
-            if (animals.length === 0) return;
-            const name = animals[currentIndex % animals.length];
-            currentIndex++;
-            fetch(`/animal/${name}`)
-                .then(r => r.json())
-                .then(data => showAnimal(data));
-        }
-
-        function randomAnimal() {
-            if (animals.length === 0) return;
-            const randomIndex = Math.floor(Math.random() * animals.length);
-            const name = animals[randomIndex];
-            fetch(`/animal/${name}`)
-                .then(r => r.json())
-                .then(data => showAnimal(data));
-        }
-
-        function searchAnimal() {
-            const name = document.getElementById("search-box").value.toLowerCase().trim();
-            if (!name) return;
-            fetch(`/animal/${name}`)
-                .then(r => r.json())
-                .then(data => {
-                    if (data.error) {
-                        alert("Animal not found - try a different name!");
-                        return;
-                    }
-                    showAnimal(data);
-                });
-        }
-
-        function saveFavourite() {
-            if (!currentAnimal) return;
-            fetch("/favourites", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(currentAnimal)
-            })
+    useEffect(() => {
+        setLoading(true);
+        setImageUrl(null);
+        fetch(`/animal/${encodeURIComponent(name)}/image`)
             .then(r => r.json())
             .then(data => {
-                alert(data.message);
-                loadFavourites();
-            });
-        }
+                setImageUrl(data.image_url || null);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [name]);
 
-        function loadFavourites() {
-            fetch("/favourites")
-                .then(r => r.json())
-                .then(data => {
-                    if (data.length === 0) {
-                        document.getElementById("favourites-list").innerHTML = '<p class="no-favs">No favourites saved yet!</p>';
-                        return;
-                    }
-                    document.getElementById("favourites-list").innerHTML = data.map(animal => `
-                        <div class="fav-item">
-                            <span class="fav-name">${animal.name}</span>
-                            <div class="fav-actions">
-                                <button class="btn-view" onclick="showAnimal(${JSON.stringify(animal).replace(/"/g, '&quot;')})">View</button>
-                                <button class="btn-remove" onclick="removeFavourite('${animal.name}')">Remove</button>
+    const emoji = {
+        elephant: '🐘', lion: '🦁', giraffe: '🦒', penguin: '🐧', dolphin: '🐬',
+        tiger: '🐯', koala: '🐨', panda: '🐼', cheetah: '🐆', gorilla: '🦍',
+        zebra: '🦓', hippo: '🦛', crocodile: '🐊', kangaroo: '🦘', flamingo: '🦩',
+        wolf: '🐺', bear: '🐻', fox: '🦊', owl: '🦉', eagle: '🦅',
+        shark: '🦈', whale: '🐳', octopus: '🐙', jellyfish: '🪼', seahorse: '🐴',
+        parrot: '🦜', toucan: '🐦', peacock: '🦚', hedgehog: '🦔', otter: '🦦',
+        chimpanzee: '🐒', orangutan: '🦧', lemur: '🐒', meerkat: '🐾', wombat: '🐾',
+        jaguar: '🐆', leopard: '🐆', lynx: '🐱', hyena: '🐾', rhinoceros: '🦏',
+        camel: '🐪', llama: '🦙', bison: '🐃', moose: '🫎', reindeer: '🦌',
+    }[name] || '🐾';
+
+    return (
+        <div style={S.imageContainer}>
+            {loading ? (
+                <div style={S.imagePlaceholder}>{emoji}</div>
+            ) : imageUrl ? (
+                <img src={imageUrl} alt={name} style={S.image} />
+            ) : (
+                <div style={{...S.imagePlaceholder, animation: 'none', fontSize: '5rem'}}>
+                    {emoji}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function AnimalCard({ animal }) {
+    if (!animal) return (
+        <div style={S.empty}>
+            <span style={S.emptyEmoji}>🌿</span>
+            <p style={S.emptyText}>Press a button to discover an animal</p>
+        </div>
+    );
+
+    return (
+        <div style={S.card} key={animal.name}>
+            <AnimalImage name={animal.name.toLowerCase()} />
+            <div style={S.cardBody}>
+                <h2 style={S.animalName}>{animal.name}</h2>
+                <div style={S.factsGrid}>
+                    <div style={S.fact(false, false)}>
+                        <div style={S.factLabel}>🌍 Location</div>
+                        <div style={S.factValue(false)}>
+                            {Array.isArray(animal.location) ? animal.location.join(', ') : animal.location}
+                        </div>
+                    </div>
+                    <div style={S.fact(false, false)}>
+                        <div style={S.factLabel}>🏕️ Habitat</div>
+                        <div style={S.factValue(false)}>{animal.habitat}</div>
+                    </div>
+                    <div style={S.fact(false, false)}>
+                        <div style={S.factLabel}>🍽️ Diet</div>
+                        <div style={S.factValue(false)}>{animal.diet}</div>
+                    </div>
+                    <div style={S.fact(false, false)}>
+                        <div style={S.factLabel}>⏳ Lifespan</div>
+                        <div style={S.factValue(false)}>{animal.lifespan}</div>
+                    </div>
+                    {animal.name_of_young && animal.name_of_young !== 'Unknown' && (
+                        <div style={S.fact(false, false)}>
+                            <div style={S.factLabel}>🍼 Baby name</div>
+                            <div style={S.factValue(false)}>{animal.name_of_young}</div>
+                        </div>
+                    )}
+                    {animal.slogan && (
+                        <div style={S.fact(true, true)}>
+                            <div style={S.factLabel}>💡 Fun fact</div>
+                            <div style={S.factValue(true)}>{animal.slogan}</div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function App() {
+    const [animals, setAnimals] = useState([]);
+    const [currentAnimal, setCurrentAnimal] = useState(null);
+    const [favourites, setFavourites] = useState([]);
+    const [search, setSearch] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        fetch('/animals').then(r => r.json()).then(setAnimals);
+        loadFavourites();
+    }, []);
+
+    const fetchAnimal = (name) => {
+        setLoading(true);
+        fetch(`/animal/${encodeURIComponent(name)}`)
+            .then(r => r.json())
+            .then(data => { setCurrentAnimal(data); setLoading(false); })
+            .catch(() => setLoading(false));
+    };
+
+    const nextAnimal = () => {
+        if (!animals.length) return;
+        fetchAnimal(animals[index % animals.length]);
+        setIndex(i => i + 1);
+    };
+
+    const randomAnimal = () => {
+        if (!animals.length) return;
+        const name = animals[Math.floor(Math.random() * animals.length)];
+        fetchAnimal(name);
+    };
+
+    const searchAnimal = () => {
+        const name = search.toLowerCase().trim();
+        if (!name) return;
+        fetchAnimal(name);
+    };
+
+    const saveFavourite = () => {
+        if (!currentAnimal) return;
+        fetch('/favourites', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(currentAnimal),
+        }).then(r => r.json()).then(d => { alert(d.message); loadFavourites(); });
+    };
+
+    const loadFavourites = () => {
+        fetch('/favourites').then(r => r.json()).then(setFavourites);
+    };
+
+    const removeFavourite = (name) => {
+        fetch(`/favourites/${encodeURIComponent(name)}`, { method: 'DELETE' })
+            .then(() => loadFavourites());
+    };
+
+    const btnHover = (e) => { e.currentTarget.style.transform = 'translateY(-2px)'; };
+    const btnOut = (e) => { e.currentTarget.style.transform = 'translateY(0)'; };
+
+    return (
+        <div style={S.app}>
+            <header style={S.header}>
+                <h1 style={S.h1}>Animal Explorer</h1>
+                <p style={S.subtitle}>Discover the wonders of the animal kingdom</p>
+            </header>
+
+            {/* Search */}
+            <div style={S.searchRow}>
+                <input
+                    style={S.input}
+                    placeholder="Search for any animal..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && searchAnimal()}
+                    onFocus={e => e.target.style.borderColor = '#5a7a5e'}
+                    onBlur={e => e.target.style.borderColor = '#d4c9b0'}
+                />
+                <button
+                    style={S.btn('#8b7355', '0 4px 12px rgba(139,115,85,0.3)')}
+                    onMouseEnter={btnHover} onMouseLeave={btnOut}
+                    onClick={searchAnimal}
+                >Search 🔍</button>
+            </div>
+
+            {/* Animal Card */}
+            {loading ? (
+                <div style={{...S.empty, padding: '40px'}}>
+                    <div style={S.loader} />
+                </div>
+            ) : (
+                <AnimalCard animal={currentAnimal} />
+            )}
+
+            {/* Controls */}
+            <div style={S.btnRow}>
+                <button
+                    style={S.btn('#5a7a5e', '0 4px 12px rgba(90,122,94,0.3)')}
+                    onMouseEnter={btnHover} onMouseLeave={btnOut}
+                    onClick={nextAnimal}
+                >Next Animal 🐾</button>
+                <button
+                    style={S.btn('#c8852a', '0 4px 12px rgba(200,133,42,0.3)')}
+                    onMouseEnter={btnHover} onMouseLeave={btnOut}
+                    onClick={randomAnimal}
+                >Random 🎲</button>
+                <button
+                    style={S.btn('#a84c2a', '0 4px 12px rgba(168,76,42,0.3)')}
+                    onMouseEnter={btnHover} onMouseLeave={btnOut}
+                    onClick={saveFavourite}
+                >Save Favourite ⭐</button>
+            </div>
+
+            {/* Divider */}
+            <div style={S.divider}>
+                <div style={S.divLine} />
+                ⭐ Favourites
+                <div style={S.divLine} />
+            </div>
+
+            {/* Favourites */}
+            <div style={S.favsCard}>
+                {favourites.length === 0 ? (
+                    <p style={S.noFavs}>No favourites saved yet!</p>
+                ) : (
+                    favourites.map((fav, i) => (
+                        <div key={fav.name} style={{...S.favItem, borderBottom: i === favourites.length - 1 ? 'none' : '1px solid #ede3d6'}}>
+                            <span style={S.favName}>{fav.name}</span>
+                            <div style={S.favActions}>
+                                <button
+                                    style={S.smallBtn('#d6e8da', '#3a6b4a')}
+                                    onClick={() => setCurrentAnimal(fav)}
+                                >View</button>
+                                <button
+                                    style={S.smallBtn('#f0e0d4', '#a84c2a')}
+                                    onClick={() => removeFavourite(fav.name)}
+                                >Remove</button>
                             </div>
                         </div>
-                    `).join("");
-                });
-        }
+                    ))
+                )}
+            </div>
+        </div>
+    );
+}
 
-        function removeFavourite(name) {
-            fetch(`/favourites/${name}`, { method: "DELETE" })
-                .then(r => r.json())
-                .then(() => loadFavourites());
-        }
-
-        loadFavourites();
-    </script>
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
 </body>
 </html>
